@@ -1,0 +1,5 @@
+Autos Comandos: Oceanic(467), Sunrise(550), Buccanner(518), Feltzer(533), Hustler(545), Majestic(517), Banshee(429), Sabre (475), Bullet(541), HotKnife(434), Phoenix(603), Stratum(561), Quad(471), Bandito(568), Taxi(420)
+Motos Comandos: BF400(581), BMX(481), Bici(509), Freeway (463)
+Interiores: Madddog, Fabrica de crack, area 51, moteell jeferson
+Characters: 0,162,22,86,218,264,272,269,265,267,287,285,290,
+294,249,247,255,259,209,199,197,171,165,146,138,92,85,82,61,49
