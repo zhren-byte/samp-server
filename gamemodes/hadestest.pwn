@@ -17,19 +17,14 @@
 #define CITY_LOS_SANTOS 	0
 #define CITY_AIR_PORT 	1
 #define CITY_POLICE_DEPARTMENT 	2
-/*enum pInfo
-{
-Ip[16],
-Nombre[MAX_PLAYER_NAME + 1]
-}
-new PlayerInfo[MAX_PLAYERS][pInfo];*/
+
 new total_vehicles_from_files=0;
 
 // Class selection globals
 new gPlayerCitySelection[MAX_PLAYERS];
 new gPlayerHasCitySelected[MAX_PLAYERS];
 new gPlayerLastCitySelectionTick[MAX_PLAYERS];
-new vehicleColor[MAX_PLAYERS];
+new vehicleColor;
 
 new Text:txtClassSelHelper;
 new Text:txtLosSantos;
@@ -54,8 +49,8 @@ public OnPlayerConnect(playerid)
 {
 	GameTextForPlayer(playerid,"~w~Hades: ~r~~k~~Server",2000,4);
   	SendClientMessage(playerid,COLOR_WHITE,"{FFFFFF}Hades: {FF0000}Server");
-	  // class selection init vars
-  	vehicleColor[playerid] = -1;
+  	// class selection init vars
+  	vehicleColor = -1;
   	gPlayerCitySelection[playerid] = -1;
 	gPlayerHasCitySelected[playerid] = 0;
 	gPlayerLastCitySelectionTick[playerid] = GetTickCount();
@@ -71,13 +66,11 @@ public OnPlayerConnect(playerid)
 	/*new ClientVersion[32];
 	GetPlayerVersion(playerid, ClientVersion, 32);
 	printf("Player %d reports client version: %s", playerid, ClientVersion);*/
-	new name[MAX_PLAYER_NAME + 1];
+ 	new name[MAX_PLAYER_NAME + 1];
  	new plrIP[16];
-	new string[MAX_PLAYER_NAME + 23 + 1];
-	GetPlayerName(playerid, name, sizeof(name));
+ 	new string[MAX_PLAYER_NAME + 23 + 1];
+    GetPlayerName(playerid, name, sizeof(name));
     GetPlayerIp(playerid, plrIP, sizeof(plrIP));
-    //GetPlayerName(playerid, PlayerInfo[playerid][Nombre], sizeof(Nombre));
-    //GetPlayerIp(playerid,PlayerInfo[playerid][Ip], sizeof(Ip));
 	if (!strcmp(plrIP, "181.44.184.51"))
     {
     	format(string, sizeof(string), "Muffin entro al servidor.");
@@ -111,7 +104,7 @@ public OnPlayerSpawn(playerid)
 	GivePlayerMoney(playerid, 300000);
 
 	if(CITY_LOS_SANTOS == gPlayerCitySelection[playerid]) {
-		vehicleColor[playerid] = 1;
+		vehicleColor = 1;
  	    randSpawn = random(sizeof(gRandomSpawns_LosSantos));
  	    SetPlayerPos(playerid,
 		 gRandomSpawns_LosSantos[randSpawn][0],
@@ -120,7 +113,7 @@ public OnPlayerSpawn(playerid)
 		SetPlayerFacingAngle(playerid,gRandomSpawns_LosSantos[randSpawn][3]);
 	}
 	else if(CITY_AIR_PORT == gPlayerCitySelection[playerid]) {
-	    vehicleColor[playerid] = 2;
+	    vehicleColor = 2;
  	    randSpawn = random(sizeof(gRandomSpawns_AirPort));
  	    SetPlayerPos(playerid,
 		 gRandomSpawns_AirPort[randSpawn][0],
@@ -129,7 +122,7 @@ public OnPlayerSpawn(playerid)
 		SetPlayerFacingAngle(playerid,gRandomSpawns_AirPort[randSpawn][3]);
 	}
 	else if(CITY_POLICE_DEPARTMENT == gPlayerCitySelection[playerid]) {
-		vehicleColor[playerid] = 3;
+		vehicleColor = 3;
  	    randSpawn = random(sizeof(gRandomSpawns_PDLS));
  	    SetPlayerPos(playerid,
 		 gRandomSpawns_PDLS[randSpawn][0],
@@ -139,7 +132,7 @@ public OnPlayerSpawn(playerid)
 	}
 
 	//SetPlayerColor(playerid,COLOR_NORMAL_PLAYER);
-	
+
 	/*
 	SetPlayerSkillLevel(playerid,WEAPONSKILL_PISTOL,200);
     SetPlayerSkillLevel(playerid,WEAPONSKILL_PISTOL_SILENCED,200);
@@ -152,7 +145,7 @@ public OnPlayerSpawn(playerid)
     SetPlayerSkillLevel(playerid,WEAPONSKILL_AK47,200);
     SetPlayerSkillLevel(playerid,WEAPONSKILL_M4,200);
     SetPlayerSkillLevel(playerid,WEAPONSKILL_SNIPERRIFLE,200);*/
-    
+
     GivePlayerWeapon(playerid,WEAPON_AK47,100);
     GivePlayerWeapon(playerid,WEAPON_SILENCED,1000);
 	//GivePlayerWeapon(playerid,WEAPON_MP5,100);
@@ -165,13 +158,14 @@ public OnPlayerSpawn(playerid)
 
 public OnPlayerDeath(playerid, killerid, reason)
 {
-    new name[ 24 ],killername[ 24 ],string[ 64 ];
+    new name[ 24 ],killername[ 24 ], string[ 64 ];
     GetPlayerName( playerid, name, 24 );
     GetPlayerName( killerid, killername, 24 );
     // if they ever return to class selection make them city
 	// select again first
 	gPlayerHasCitySelected[playerid] = 0;
- 	if(killerid == INVALID_PLAYER_ID) {
+
+	if(killerid == INVALID_PLAYER_ID) {
         ResetPlayerMoney(playerid);
         format( string, sizeof(string), "~w~%s se murio.", name );
         GameTextForAll( string, 2500, 4 );
@@ -182,9 +176,9 @@ public OnPlayerDeath(playerid, killerid, reason)
 		GameTextForAll( string, 2500, 4 );
 		SendDeathMessage(killerid, playerid, reason);
 	}
+
    	return 1;
 }
-
 public OnPlayerDisconnect(playerid, reason)
 {
     new
@@ -228,7 +222,7 @@ ClassSel_SetupCharSelection(playerid)
     	SetPlayerCameraPos(playerid,352.9164,194.5702,1014.1875);
 		SetPlayerCameraLookAt(playerid,349.0453,193.2271,1014.1797);
 	}
-	
+
 }
 
 //----------------------------------------------------------
@@ -260,7 +254,7 @@ ClassSel_InitTextDraws()
     // Init our observer helper text display
 	txtClassSelHelper = TextDrawCreate(10.0, 415.0,
 	   " Toca ~b~~k~~GO_LEFT~ ~w~o ~b~~k~~GO_RIGHT~ ~w~para cambiar ciudad.~n~ Toca ~r~~k~~PED_FIREWEAPON~ ~w~para seleccionar.");
- 	
+
 	TextDrawUseBox(txtClassSelHelper, 1);
 	TextDrawBoxColor(txtClassSelHelper,0x222222BB);
 	TextDrawLetterSize(txtClassSelHelper,0.3,1.0);
@@ -272,7 +266,6 @@ ClassSel_InitTextDraws()
     TextDrawColor(txtClassSelHelper,0xFFFFFFFF);
 }
 
-
 //----------------------------------------------------------
 
 ClassSel_SetupSelectedCity(playerid)
@@ -280,7 +273,7 @@ ClassSel_SetupSelectedCity(playerid)
 	if(gPlayerCitySelection[playerid] == -1) {
 		gPlayerCitySelection[playerid] = CITY_LOS_SANTOS;
 	}
-	
+
 	if(gPlayerCitySelection[playerid] == CITY_LOS_SANTOS) {
 		SetPlayerInterior(playerid,0);
    		SetPlayerCameraPos(playerid, 2566.3796, -1751.9460, 61.4755);
@@ -339,7 +332,7 @@ ClassSel_HandleCitySelection(playerid)
 {
 	new Keys,ud,lr;
     GetPlayerKeys(playerid,Keys,ud,lr);
-    
+
     if(gPlayerCitySelection[playerid] == -1) {
 		ClassSel_SwitchToNextCity(playerid);
 		return;
@@ -347,7 +340,7 @@ ClassSel_HandleCitySelection(playerid)
 
 	// only allow new selection every ~500 ms
 	if( (GetTickCount() - gPlayerLastCitySelectionTick[playerid]) < 500 ) return;
-	
+
 	if(Keys & KEY_FIRE) {
 	    gPlayerHasCitySelected[playerid] = 1;
 	    TextDrawHideForPlayer(playerid,txtClassSelHelper);
@@ -357,7 +350,7 @@ ClassSel_HandleCitySelection(playerid)
 	    TogglePlayerSpectating(playerid,0);
 	    return;
 	}
-	
+
 	if(lr > 0) {
 	   ClassSel_SwitchToNextCity(playerid);
 	}
@@ -365,6 +358,7 @@ ClassSel_HandleCitySelection(playerid)
 	   ClassSel_SwitchToPreviousCity(playerid);
 	}
 }
+
 //----------------------------------------------------------
 
 public OnPlayerRequestClass(playerid, classid)
@@ -381,7 +375,7 @@ public OnPlayerRequestClass(playerid, classid)
     		gPlayerCitySelection[playerid] = -1;
 		}
   	}
-    
+
 	return 0;
 }
 
@@ -396,14 +390,14 @@ public OnGameModeInit()
 	EnableStuntBonusForAll(0);
 	SetWeather(2);
 	SetWorldTime(11);
-	
+
 	//SetObjectsDefaultCameraCol(true);
 	//UsePlayerPedAnims();
 	//ManualVehicleEngineAndLights();
 	//LimitGlobalChatRadius(300.0);
-	
+
 	ClassSel_InitTextDraws();
-    
+
 	// Player Class
 	AddPlayerClass(0,1759.0189,-1898.1260,13.5622,266.4503,-1,-1,-1,-1,-1,-1); //Cj - Franco
 	AddPlayerClass(171,1759.0189,-1898.1260,13.5622,266.4503,-1,-1,-1,-1,-1,-1);//Camarero - Zhren
@@ -435,29 +429,29 @@ public OnGameModeInit()
 	AddPlayerClass(85,1759.0189,-1898.1260,13.5622,266.4503,-1,-1,-1,-1,-1,-1);
 	AddPlayerClass(82,1759.0189,-1898.1260,13.5622,266.4503,-1,-1,-1,-1,-1,-1);
 	AddPlayerClass(165,1759.0189,-1898.1260,13.5622,266.4503,-1,-1,-1,-1,-1,-1);
-	
+
 	// SPECIAL
 	total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/trains.txt");
 	total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/pilots.txt");
 	total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/prost.txt");
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/groove.txt");
-    
+
    	// LAS VENTURAS
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/lv_law.txt");
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/lv_airport.txt");
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/lv_gen.txt");
-    
+
     // SAN FIERRO
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/sf_law.txt");
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/sf_airport.txt");
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/sf_gen.txt");
-    
+
     // LOS SANTOS
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/ls_law.txt");
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/ls_airport.txt");
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/ls_gen_inner.txt");
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/ls_gen_outer.txt");
-    
+
     // OTHER AREAS
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/whetstone.txt");
     total_vehicles_from_files += LoadStaticVehiclesFromFile("vehicles/bone.txt");
@@ -482,7 +476,7 @@ public OnPlayerUpdate(playerid)
 	    ClassSel_HandleCitySelection(playerid);
 	    return 1;
 	}
-	
+
 	// No weapons in interiors
 	//if(GetPlayerInterior(playerid) != 0 && GetPlayerWeapon(playerid) != 0) {
 	    //SetPlayerArmedWeapon(playerid,0); // fists
@@ -503,7 +497,7 @@ public OnPlayerUpdate(playerid)
     SetPlayerHealth(playerid, 1.0);
     return 0;
 	}
-	
+
 	/* No jetpacks allowed
 	if(GetPlayerSpecialAction(playerid) == SPECIAL_ACTION_USEJETPACK) {
 	    Kick(playerid);
@@ -589,7 +583,142 @@ CMD:minigun(playerid, params[]) {
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
 	if(response)
-	{
+ 	   {
+ 	   switch(dialogid == 1)
+  	      {
+			case 1:
+   	    	 {
+	  	         switch(listitem)
+	  	      {
+   	        	 case 0:
+    	        	{
+    	                new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(467,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+    		        }
+	        	    case 1:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(550,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }
+	        	    case 2:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(518,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }
+              		case 3:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(533,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }
+              		case 4:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(545,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }
+              		case 5:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(517,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }case 6:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(429,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }case 7:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(475,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }case 8:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(541,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }case 9:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(424,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }case 10:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(603,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }case 11:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(561,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }case 12:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(471,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }case 13:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(568,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }case 14:
+	        	    {
+	                    new Float:X;
+						new Float:Y;
+						new Float:Z;
+						GetPlayerPos(playerid,X,Y,Z);
+						new PlayersVehicle = CreateVehicle(420,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
+						LinkVehicleToInterior(PlayersVehicle, GetPlayerInterior(playerid));
+	        	    }
+	        	}
+		    }
+		}
 		switch(dialogid == 2)
 	        {
 			case 1:
@@ -602,7 +731,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						new Float:Y;
 						new Float:Z;
 						GetPlayerPos(playerid,X,Y,Z);
-						new PlayersMoto = CreateVehicle(581,X+5,Y,Z,1,vehicleColor[playerid],vehicleColor[playerid],90000);
+						new PlayersMoto = CreateVehicle(581,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
 						LinkVehicleToInterior(PlayersMoto, GetPlayerInterior(playerid));
 	        	    }
 	        	    case 1:
@@ -611,7 +740,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						new Float:Y;
 						new Float:Z;
 						GetPlayerPos(playerid,X,Y,Z);
-						new PlayersMoto = CreateVehicle(481,X+5,Y,Z,1,vehicleColor[playerid],vehicleColor[playerid],90000);
+						new PlayersMoto = CreateVehicle(481,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
 						LinkVehicleToInterior(PlayersMoto, GetPlayerInterior(playerid));
 	        	    }
 	        	    case 2:
@@ -620,7 +749,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						new Float:Y;
 						new Float:Z;
 						GetPlayerPos(playerid,X,Y,Z);
-						new PlayersMoto = CreateVehicle(509,X+5,Y,Z,1,vehicleColor[playerid],vehicleColor[playerid],90000);
+						new PlayersMoto = CreateVehicle(509,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
 						LinkVehicleToInterior(PlayersMoto, GetPlayerInterior(playerid));
 	        	    }
               		case 3:
@@ -629,7 +758,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						new Float:Y;
 						new Float:Z;
 						GetPlayerPos(playerid,X,Y,Z);
-						new PlayersMoto = CreateVehicle(463,X+5,Y,Z,1,vehicleColor[playerid],vehicleColor[playerid],90000);
+						new PlayersMoto = CreateVehicle(463,X+5,Y,Z,1,vehicleColor,vehicleColor,90000);
 						LinkVehicleToInterior(PlayersMoto, GetPlayerInterior(playerid));
 	        	    }
 	        	}

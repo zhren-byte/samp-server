@@ -10,8 +10,8 @@
 #define ITEMS_PER_LINE  	7
 
 #define HEADER_TEXT "Vehiculos"
-#define NEXT_TEXT   "Anterior"
-#define PREV_TEXT   "Siguiente"
+#define NEXT_TEXT   ">>"
+#define PREV_TEXT   "<<"
 
 #define DIALOG_BASE_X   	75.0
 #define DIALOG_BASE_Y   	130.0

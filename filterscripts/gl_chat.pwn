@@ -44,8 +44,8 @@ stock ProcessActionText(playerid, message[], actiontype)
     GetPlayerName(playerid, PlayerName, sizeof(PlayerName));
 
 	if(actiontype == ACTION_DO) {
-		format(ActionText, 256, "* %s ((%s))", message, PlayerName);
-		format(ActionBubble, MAX_CHATBUBBLE_LENGTH, "* (( %s ))", message);
+		format(ActionText, 256, "* %s %s", message, PlayerName);
+		format(ActionBubble, MAX_CHATBUBBLE_LENGTH, "* %s ", message);
 	} else {
 	    format(ActionText, 256, "* %s %s", PlayerName, message);
 	    format(ActionBubble, MAX_CHATBUBBLE_LENGTH, "* %s", message);
@@ -70,7 +70,7 @@ stock GlobalOOCMessage(playerid, message[])
 	}
 
 	GetPlayerName(playerid, PlayerName, sizeof(PlayerName));
-	format(msg, 256, "(( %s: %s ))", PlayerName, message);
+	format(msg, 256, " %s: %s ", PlayerName, message);
 
 	for(new i = 0; i < MAX_PLAYERS; i++) { // for every player
 		if(IsPlayerConnected(i)) { // Todo: check if player accepts occ
@@ -105,7 +105,7 @@ stock ProcessLocalOOC(playerid, message[])
 	new new_message[256+1];
 	new PlayerName[MAX_PLAYER_NAME+1];
 	GetPlayerName(playerid, PlayerName, sizeof(PlayerName));
-	format(new_message, 256, "%s (( %s ))", PlayerName, message);
+	format(new_message, 256, "%s  %s ", PlayerName, message);
 	LocalMessage(TALK_DISTANCE, playerid, LOCAL_TALK_COLOR, new_message);
 }
 
