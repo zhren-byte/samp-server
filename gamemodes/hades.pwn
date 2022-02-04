@@ -17,12 +17,12 @@
 #define CITY_LOS_SANTOS 	0
 #define CITY_AIR_PORT 	1
 #define CITY_POLICE_DEPARTMENT 	2
-/*enum pInfo
+enum pInfo
 {
 Ip[16],
 Nombre[MAX_PLAYER_NAME + 1]
 }
-new PlayerInfo[MAX_PLAYERS][pInfo];*/
+new PlayerInfo[MAX_PLAYERS][pInfo];
 new total_vehicles_from_files=0;
 
 // Class selection globals
@@ -71,20 +71,16 @@ public OnPlayerConnect(playerid)
 	/*new ClientVersion[32];
 	GetPlayerVersion(playerid, ClientVersion, 32);
 	printf("Player %d reports client version: %s", playerid, ClientVersion);*/
-	new name[MAX_PLAYER_NAME + 1];
- 	new plrIP[16];
 	new string[MAX_PLAYER_NAME + 23 + 1];
-	GetPlayerName(playerid, name, sizeof(name));
-    GetPlayerIp(playerid, plrIP, sizeof(plrIP));
-    //GetPlayerName(playerid, PlayerInfo[playerid][Nombre], sizeof(Nombre));
-    //GetPlayerIp(playerid,PlayerInfo[playerid][Ip], sizeof(Ip));
-	if (!strcmp(plrIP, "181.44.184.51"))
+    GetPlayerName(playerid, PlayerInfo[playerid][Nombre], MAX_PLAYER_NAME + 1);
+    GetPlayerIp(playerid,PlayerInfo[playerid][Ip], 16);
+	if (!strcmp(PlayerInfo[playerid][Ip], "181.44.184.51"))
     {
     	format(string, sizeof(string), "Muffin entro al servidor.");
     	SendClientMessageToAll(0xC4C4C4FF, string);
  		return 1;
     }
-    format(string, sizeof(string), "%s entro al servidor.", name);
+    format(string, sizeof(string), "%s entro al servidor.", PlayerInfo[playerid][Nombre]);
     SendClientMessageToAll(0xC4C4C4FF, string);
  	return 1;
 }
@@ -108,7 +104,7 @@ public OnPlayerSpawn(playerid)
 	SetPlayerInterior(playerid,0);
 	TogglePlayerClock(playerid,0);
  	ResetPlayerMoney(playerid);
-	GivePlayerMoney(playerid, 300000);
+	GivePlayerMoney(playerid, 0);
 
 	if(CITY_LOS_SANTOS == gPlayerCitySelection[playerid]) {
 		vehicleColor[playerid] = 1;
@@ -398,7 +394,7 @@ public OnGameModeInit()
 	SetWorldTime(11);
 	
 	//SetObjectsDefaultCameraCol(true);
-	//UsePlayerPedAnims();
+	UsePlayerPedAnims();
 	//ManualVehicleEngineAndLights();
 	//LimitGlobalChatRadius(300.0);
 	
@@ -509,8 +505,7 @@ public OnPlayerUpdate(playerid)
 	    Kick(playerid);
 	    return 0;
 	}*/
-
-	/* For testing animations
+ /*
     new msg[128+1];
 	new animlib[32+1];
 	new animname[32+1];
@@ -522,8 +517,8 @@ public OnPlayerUpdate(playerid)
 		format(msg, 128, "anim(%d,%d): %s %s", lastanimid, thisanimid, animlib, animname);
 		lastanimid = thisanimid;
 		SendClientMessage(playerid, 0xFFFFFFFF, msg);
-	}*/
-
+	}
+*/
 	return 1;
 }
 
